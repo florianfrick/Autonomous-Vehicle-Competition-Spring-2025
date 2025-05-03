@@ -1,0 +1,4 @@
+# File: resource/diff_drive_mpc
+# This file is required by ament to identify this package during installation.
+# It should match the package name exactly and be an empty or comment-only file.
+
