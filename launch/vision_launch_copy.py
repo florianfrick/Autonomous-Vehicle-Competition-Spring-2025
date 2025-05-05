@@ -1,11 +1,11 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 def generate_launch_description():
     return LaunchDescription([
+        # Declare launch arguments
         DeclareLaunchArgument(
             'w',
             default_value='640',
@@ -16,6 +16,8 @@ def generate_launch_description():
             default_value='480',
             description='Height of the camera image'
         ),
+
+        # Camera node
         Node(
             package='v4l2_camera',
             executable='v4l2_camera_node',
@@ -23,33 +25,21 @@ def generate_launch_description():
             parameters=[
                 {'video_device': '/dev/video0'},
                 {'image_size': PythonExpression(['[', LaunchConfiguration('w'), ',', LaunchConfiguration('h'), ']'])},
-            #     {'frame_rate': 30.0},
-            #     {'brightness': 50},
-            #     {'contrast': 0},
-            #     {'saturation': 0},
-            #     {'white_balance_auto_preset': 1}, # Auto white balance
-            #     {'auto_exposure': 1}, # Manual exposure
-            #     {'exposure_time_absolute': 1000} # manual exposure value
+                {'frame_rate': 30.0}
             ]
         ),
+
+        # Canny edge detection node
         Node(
             package='vision_pkg',
-            executable='bright_spot_tracker',
-            name='bright_spot_tracker'
+            executable='canny_edge_node',
+            name='canny_edge_node'
         ),
-        Node(
-            package='pid_controller',
-            executable='pid_node',
-            name='pid'
-        ),
-        Node(
-            package='ros2_pca9685',
-            executable='listener',
-            name='motor_listener'
-        ),
+
+        # Image viewer
         Node(
             package='rqt_image_view',
             executable='rqt_image_view',
             name='view'
-        ),
+        )
     ])

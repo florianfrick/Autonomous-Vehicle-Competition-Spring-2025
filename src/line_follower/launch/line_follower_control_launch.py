@@ -9,10 +9,10 @@ def generate_launch_description():
             name='line_follower',
             output='screen',
         ),
-        Node(
-            package='line_follower',
-            executable='robot_control_node',
-            name='robot_control',
-            output='screen',
-        ),
+        # Node(
+        #     package='line_follower',
+        #     executable='robot_control_node',
+        #     name='robot_control',
+        #     output='screen',
+        # ),
     ])

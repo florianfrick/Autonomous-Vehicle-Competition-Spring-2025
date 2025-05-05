@@ -44,12 +44,12 @@ print("Initializing IO System - freq")
 pca.frequency = 100
 
 
-maxr=100
+maxr=135
 minl=30
-maxthr=100
-minthr= 75
+maxthr=125
+minthr= 65
 thrinit = 90
-strinit = 100
+strinit = 85
 pinSTR = 15
 pinTHR = 14
 
@@ -74,13 +74,14 @@ class MinimalSubscriber(Node):
             Twist,
             'cmd_vel',
             self.listener_callback,
-            10)
+            3)
         self.subscription  # prevent unused variable warning
         #signal.signal(signal.SIGINT, self.shutdown_handler)
 
     def listener_callback(self, msg):
         throttle=-msg.linear.x
         steering=msg.angular.z
+
   #      self.get_logger().info('Y AXIS: "%s"' % yaxis)
  #       self.get_logger().info('X AXIS: "%s"' % xaxis)
         self.get_logger().info('Throttle: "%s"' % throttle)
@@ -116,6 +117,8 @@ class MinimalSubscriber(Node):
 
         if newthrvalue <minthr:
             newthrvalue = minthr 
+        print(f"Linear.x: {msg.linear.x}, Throttle angle: {newthrvalue}")
+
 
         move_robot(newthrvalue, newstrvalue)
 

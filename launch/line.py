@@ -23,33 +23,33 @@ def generate_launch_description():
             parameters=[
                 {'video_device': '/dev/video0'},
                 {'image_size': PythonExpression(['[', LaunchConfiguration('w'), ',', LaunchConfiguration('h'), ']'])},
-            #     {'frame_rate': 30.0},
-            #     {'brightness': 50},
-            #     {'contrast': 0},
-            #     {'saturation': 0},
-            #     {'white_balance_auto_preset': 1}, # Auto white balance
-            #     {'auto_exposure': 1}, # Manual exposure
-            #     {'exposure_time_absolute': 1000} # manual exposure value
+                # {'frame_rate': 30.0},
+                # {'brightness': 50},
+                # {'contrast': 0},
+                # {'saturation': 0},
+                # {'white_balance_auto_preset': 1}, # Auto white balance
+                # {'auto_exposure': 1}, # Manual exposure
+                # {'exposure_time_absolute': 1000} # manual exposure value
             ]
         ),
+        # Node(
+        #     package='rqt_image_view',
+        #     executable='rqt_image_view',
+        #     name='view'
+        # ),
         Node(
-            package='vision_pkg',
-            executable='bright_spot_tracker',
-            name='bright_spot_tracker'
+            package='line_follower',
+            executable='line_follower_node',
+            name='line'
         ),
-        Node(
-            package='pid_controller',
-            executable='pid_node',
-            name='pid'
-        ),
-        Node(
-            package='ros2_pca9685',
-            executable='listener',
-            name='motor_listener'
-        ),
-        Node(
-            package='rqt_image_view',
-            executable='rqt_image_view',
-            name='view'
-        ),
+        # Node(
+        #     package='pid_controller',
+        #     executable='pid_node',
+        #     name='pid'
+        # ),
+        # Node(
+        #     package='ros2_pca9685',
+        #     executable='listener',
+        #     name='motor_listener'
+        # ),
     ])

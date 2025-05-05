@@ -15,7 +15,9 @@ setup(
     entry_points={
         'console_scripts': [
             'line_follower_node = line_follower.line_follower_node:main',
-            'black_line_detector = line_follower.black_line_detector:main',
+            'line_follower_node2 = line_follower.line_follower_node2:main',
+            'drive = line_follower.drive:main',
+            'controller = line_follower.controller:main',
         ],
     },
 )
