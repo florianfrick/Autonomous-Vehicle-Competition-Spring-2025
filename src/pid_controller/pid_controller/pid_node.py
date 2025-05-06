@@ -25,13 +25,13 @@ class PIDController(Node):
         self.previous_time = None
 
         # Control parameters
-        self.min_linear_speed = 0.13 # 0.12 works
+        self.min_linear_speed = 0.14 # 0.12 works
         self.max_linear_speed = 0.22 # 0.19 works
 
         # Turning help parameters
         self.lost_tape = False
         self.last_seen_tape_time = None
-        self.recovery_hold_duration = 0.0  # seconds to wait before resuming PID control
+        self.recovery_hold_duration = 0.3  # seconds to wait before resuming PID control
 
 
         self.get_logger().info("PID Controller Node initialized.")

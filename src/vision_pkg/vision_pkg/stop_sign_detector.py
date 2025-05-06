@@ -50,7 +50,7 @@ class StopSignDetector(Node):
             area = cv2.contourArea(cnt)
             if len(approx) >= 6:
                 self.get_logger().info(f"STOP sign NOT detected.   Area: {area}")
-            if len(approx) >= 6 and area > 7500:
+            if len(approx) >= 6 and area > 2500:
                 detected = True
                 break
 
