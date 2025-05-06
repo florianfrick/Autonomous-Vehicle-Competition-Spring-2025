@@ -61,7 +61,7 @@ V4L2Camera::V4L2Camera(rclcpp::NodeOptions const & options)
   else{
     publish_next_frame_ = true;
   }
-  const auto qos = use_sensor_data_qos ? rclcpp::SensorDataQoS() : rclcpp::QoS(10);
+  const auto qos = use_sensor_data_qos ? rclcpp::SensorDataQoS() : rclcpp::QoS(1);
 
   use_image_transport_ = declare_parameter("use_image_transport", true);
 

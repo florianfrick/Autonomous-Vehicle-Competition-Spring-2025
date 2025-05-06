@@ -15,10 +15,20 @@ class BrightSpotTracker(Node):
         self.lower_blue = np.array([100, 40, 30])
         self.upper_blue = np.array([150, 255, 255])
 
+        self.lower_green = np.array([70, 35, 85])
+        self.upper_green = np.array([90, 150, 150])
+
+        # self.lower_green2 = np.array([70, 40, 50])
+        # self.upper_green2 = np.array([90, 80, 90])
+
+        # self.lower_green2 = np.array([30, 0, 100])
+        # self.upper_green2 = np.array([100, 50, 255])
+
+        self.green_threshold = 50
 
         # self.pixel_threshold = 80
-        self.pixel_threshold_enter = 80 # enters recovery mode if below this number - was 100
-        self.pixel_threshold_exit = 200 # returns to normal use if above this number - was 80
+        self.pixel_threshold_enter = 85
+        self.pixel_threshold_exit = 55
 
         self.recovery_mode = False
         self.recovery_start_time = None
@@ -34,17 +44,32 @@ class BrightSpotTracker(Node):
         try:
             frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            mask = cv2.inRange(hsv, self.lower_blue, self.upper_blue)
-
-            # kernel = np.ones((5, 5), np.uint8)
-            # mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
-            # mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-
+            kernel = np.ones((5, 5), np.uint8)
             output = frame.copy()
-            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            if contours:
-                largest = max(contours, key=cv2.contourArea)
+            maskblue = cv2.inRange(hsv, self.lower_blue, self.upper_blue)
+            maskblue = cv2.morphologyEx(maskblue, cv2.MORPH_OPEN, kernel)
+            maskblue = cv2.morphologyEx(maskblue, cv2.MORPH_CLOSE, kernel)
+            bluecontours, _ = cv2.findContours(maskblue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            maskgreen = cv2.inRange(hsv, self.lower_green, self.upper_green)
+            # maskgreen2 = cv2.inRange(hsv, self.lower_green2, self.upper_green2)
+            # maskgreen = cv2.bitwise_or(maskgreen, maskgreen2)
+
+            # maskgreen = cv2.morphologyEx(maskgreen, cv2.MORPH_OPEN, kernel)
+            # maskgreen = cv2.morphologyEx(maskgreen, cv2.MORPH_CLOSE, kernel)
+            greencontours, _ = cv2.findContours(maskgreen, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            if greencontours:
+                # if enough green is seen, use it instead of the blue for offset
+                largest = max(greencontours, key=cv2.contourArea)
+                if len(largest) < self.green_threshold:
+                    # not enough green seen
+                    if bluecontours:
+                        largest = max(bluecontours, key=cv2.contourArea)
+                else:
+                    self.get_logger().info(f"Target spotted. {len(largest)} green pixels")
+                
                 current_time = self.get_clock().now().nanoseconds * 1e-9
 
                 # Threshold depends on recovery mode

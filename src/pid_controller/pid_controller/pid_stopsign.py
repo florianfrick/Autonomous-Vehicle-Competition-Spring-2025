@@ -1,8 +1,8 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Bool
 from geometry_msgs.msg import Twist
-from threading import Thread
+from rclpy.time import Time, Duration 
 import numpy as np
 import time
 
@@ -13,6 +13,9 @@ class PIDController(Node):
         super().__init__('pid_controller')
         self.subscription = self.create_subscription(
             Float32, '/tape_offset', self.offset_callback, 1)
+        self.subscription = self.create_subscription(
+            Bool, '/stop_sign_detected', self.stopsign_callback, 1)
+
         self.publisher = self.create_publisher(Twist, '/cmd_vel', 1)
 
         # PID parameters
@@ -21,12 +24,21 @@ class PIDController(Node):
         self.ki = scale*0.02 # 0.02 works
         self.kd = scale*0.2 # 0.2 works
         self.previous_error = 0.0
-        self.integral = 0.0
+        self.integral = 0.1
         self.previous_time = None
 
         # Control parameters
-        self.min_linear_speed = 0.12 # 0.12 works
-        self.max_linear_speed = 0.19 # 0.15 works
+        self.min_linear_speed = 0.12 # 0.15
+        self.max_linear_speed = 0.15 # 0.19
+
+        # Stop Sign State
+        self.is_stopped_for_sign = False
+        self.stop_sign_start_time = None
+        self.stop_duration = Duration(seconds=3.0)
+
+        self.last_stop_sign_handled_time = None
+        self.stop_sign_debounce_duration = Duration(seconds=5.0) # Ignore new detections for 5 sec after handling one
+
 
         # Turning help parameters
         self.lost_tape = False
@@ -36,15 +48,30 @@ class PIDController(Node):
 
         self.get_logger().info("PID Controller Node initialized.")
 
+    def stopsign_callback(self, msg):
+        curr_time = self.get_clock().now()
+        
+        if msg.data and not self.is_stopped_for_sign:
+            debounce_elapsed = Duration(seconds=0.0)
+            if self.last_stop_sign_handled_time is not None:
+                 debounce_elapsed = curr_time - self.last_stop_sign_handled_time
+
+            if debounce_elapsed >= self.stop_sign_debounce_duration:
+                self.is_stopped_for_sign = True
+                self.stop_sign_start_time = curr_time
+                self.last_stop_sign_handled_time = curr_time
+                self.get_logger().info("Stopping at stop sign.")
+
+
     def offset_callback(self, msg):
         if msg.data == -12345.0:
         # if False:
             self.integral = 0.0
-            # self.previous_error = 0.0
+            self.previous_error = 0.0
             self.previous_time = self.get_clock().now()
             cmd = Twist()
-            cmd.linear.x = -self.min_linear_speed*1.0 # 1.0 works
-            cmd.angular.z = -1.5 # -1.2 works
+            cmd.linear.x = -self.min_linear_speed*1.0
+            cmd.angular.z = -1.2
             self.publisher.publish(cmd)
             self.get_logger().info(f"Stop data received")
         else:
@@ -56,7 +83,7 @@ class PIDController(Node):
                 dt = (curr_time - self.previous_time).nanoseconds * 1e-9
             else:
                 dt = 0
-
+            
             self.integral += error * dt
 
             if dt == 0:
@@ -69,12 +96,28 @@ class PIDController(Node):
             self.previous_error = error
             self.previous_time = curr_time
 
+
             cmd = Twist()
             k = 0.2 # linear relationship to slow down based on correction
             calculated_linear_speed = max(self.min_linear_speed, self.max_linear_speed - (k*abs(correction)))
             cmd.linear.x = calculated_linear_speed
-            cmd.angular.z = correction - 0.55 # zero angular = veer right (if veering left, decrease value being subtracted)
-            # cmd.angular.z = -0.6 # 0 angular = veer right
+            cmd.angular.z = correction - 0.6# 0 angular = veer right
+
+            if self.is_stopped_for_sign:
+                elapsed_time = curr_time - self.stop_sign_start_time
+                if elapsed_time < self.stop_duration:
+                    cmd = Twist()
+                    cmd.linear.x = 0.0
+                    cmd.angular.z = 0.0
+                    self.publisher.publish(cmd)
+                    self.get_logger().info(f"Stopped for stop sign. Time remaining: {(self.stop_duration - elapsed_time).to_sec():.2f}s")
+
+                else:
+                    # Stop duration over
+                    self.is_stopped_for_sign = False
+                    self.stop_sign_start_time = None
+                    self.get_logger().info("Starting to drive again.")
+
             self.publisher.publish(cmd)
 
             self.get_logger().info(

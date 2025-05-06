@@ -21,6 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'pid_node = pid_controller.pid_node:main',
+            'pid_school = pid_controller.pid_school:main',
+            'pid_stopsign = pid_controller.pid_stopsign:main',
         ],
     }
 )

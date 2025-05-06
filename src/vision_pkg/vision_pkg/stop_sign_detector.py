@@ -14,9 +14,9 @@ class StopSignDetector(Node):
             Image,
             '/image_raw',
             self.image_callback,
-            10
+            1
         )
-        self.publisher_ = self.create_publisher(Bool, '/stop_sign_detected', 10)
+        self.publisher_ = self.create_publisher(Bool, '/stop_sign_detected', 1)
         self.stop_sign_detected = False  # Internal flag to only publish once
         self.get_logger().info("Stop Sign Detector Node Initialized.")
 
@@ -26,9 +26,14 @@ class StopSignDetector(Node):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         # Define red color ranges
-        lower_red1 = np.array([0, 100, 100])
-        upper_red1 = np.array([10, 255, 255])
-        lower_red2 = np.array([160, 100, 100])
+        # lower_red1 = np.array([0, 100, 100])
+        # upper_red1 = np.array([10, 255, 255])
+        # lower_red2 = np.array([160, 100, 100])
+        # upper_red2 = np.array([180, 255, 255])
+
+        lower_red1 = np.array([0, 85, 85])
+        upper_red1 = np.array([8, 255, 255])
+        lower_red2 = np.array([160, 85, 85])
         upper_red2 = np.array([180, 255, 255])
 
         # Combine masks for red
@@ -57,8 +62,8 @@ class StopSignDetector(Node):
 
 
         # Optional: visualize for debugging
-        # cv2.imshow("Red Mask", red_mask)
-        # cv2.waitKey(1)
+        cv2.imshow("Red Mask", red_mask)
+        cv2.waitKey(1)
 
 def main(args=None):
     rclpy.init(args=args)
