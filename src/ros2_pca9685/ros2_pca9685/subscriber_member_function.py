@@ -84,8 +84,9 @@ class MinimalSubscriber(Node):
 
   #      self.get_logger().info('Y AXIS: "%s"' % yaxis)
  #       self.get_logger().info('X AXIS: "%s"' % xaxis)
-        self.get_logger().info('Throttle: "%s"' % throttle)
-        self.get_logger().info('Steering: "%s"' % steering)
+
+        # self.get_logger().info('Throttle: "%s"' % throttle) # commented out for performance?
+        # self.get_logger().info('Steering: "%s"' % steering) # commented out for performance?
         
         oldstrvalue = float(steering)
         

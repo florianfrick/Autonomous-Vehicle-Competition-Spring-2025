@@ -27,8 +27,8 @@ class BrightSpotTracker(Node):
         self.green_threshold = 50
 
         # self.pixel_threshold = 80
-        self.pixel_threshold_enter = 85
-        self.pixel_threshold_exit = 55
+        self.pixel_threshold_enter = 80
+        self.pixel_threshold_exit = 200
 
         self.recovery_mode = False
         self.recovery_start_time = None
@@ -44,12 +44,12 @@ class BrightSpotTracker(Node):
         try:
             frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            kernel = np.ones((5, 5), np.uint8)
+            # kernel = np.ones((5, 5), np.uint8)
             output = frame.copy()
 
             maskblue = cv2.inRange(hsv, self.lower_blue, self.upper_blue)
-            maskblue = cv2.morphologyEx(maskblue, cv2.MORPH_OPEN, kernel)
-            maskblue = cv2.morphologyEx(maskblue, cv2.MORPH_CLOSE, kernel)
+            # maskblue = cv2.morphologyEx(maskblue, cv2.MORPH_OPEN, kernel)
+            # maskblue = cv2.morphologyEx(maskblue, cv2.MORPH_CLOSE, kernel)
             bluecontours, _ = cv2.findContours(maskblue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
             maskgreen = cv2.inRange(hsv, self.lower_green, self.upper_green)
@@ -116,9 +116,9 @@ class BrightSpotTracker(Node):
                     cv2.circle(output, (cx, cy), 10, (0, 0, 255), -1)
                     cv2.rectangle(output, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
-                    self.get_logger().info(
-                        f"Tape centroid: ({cx}, {cy}), Offset: {offset.data:.4f}, Bounds: (x_min={x}, x_max={x+w}, y_min={y}, y_max={y+h}), Pixels detected: {len(largest)}"
-                    )
+                    # self.get_logger().info(
+                    #     f"Tape centroid: ({cx}, {cy}), Offset: {offset.data:.4f}, Bounds: (x_min={x}, x_max={x+w}, y_min={y}, y_max={y+h}), Pixels detected: {len(largest)}"
+                    # )
 
                     vis_msg = self.bridge.cv2_to_imgmsg(output, encoding='bgr8')
                     vis_msg.header.stamp = msg.header.stamp

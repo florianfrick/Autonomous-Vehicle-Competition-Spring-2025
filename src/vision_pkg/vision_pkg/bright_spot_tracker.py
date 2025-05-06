@@ -56,8 +56,7 @@ class BrightSpotTracker(Node):
                     if len(largest) > self.pixel_threshold_exit and time_in_recovery > self.recovery_timeout:
                         self.recovery_mode = False
                         self.recovery_start_time = None
-                        self.get_logger().info(
-                            f"Reacquired tape: {len(largest)} pixels, exiting recovery after {time_in_recovery:.2f}s")
+                        # self.get_logger().info(f"Reacquired tape: {len(largest)} pixels, exiting recovery after {time_in_recovery:.2f}s")
                     else:
                         offset = Float32()
                         offset.data = -12345.0
@@ -91,9 +90,7 @@ class BrightSpotTracker(Node):
                     cv2.circle(output, (cx, cy), 10, (0, 0, 255), -1)
                     cv2.rectangle(output, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
-                    self.get_logger().info(
-                        f"Tape centroid: ({cx}, {cy}), Offset: {offset.data:.4f}, Bounds: (x_min={x}, x_max={x+w}, y_min={y}, y_max={y+h}), Pixels detected: {len(largest)}"
-                    )
+                    # self.get_logger().info(f"Tape centroid: ({cx}, {cy}), Offset: {offset.data:.4f}, Bounds: (x_min={x}, x_max={x+w}, y_min={y}, y_max={y+h}), Pixels detected: {len(largest)}")
 
                     vis_msg = self.bridge.cv2_to_imgmsg(output, encoding='bgr8')
                     vis_msg.header.stamp = msg.header.stamp
@@ -103,7 +100,7 @@ class BrightSpotTracker(Node):
                     if not self.recovery_mode:
                         self.recovery_mode = True
                         self.recovery_start_time = current_time
-                        self.get_logger().info("Entering recovery mode")
+                        # self.get_logger().info("Entering recovery mode")
 
                     offset = Float32()
                     offset.data = -12345.0

@@ -24,7 +24,7 @@ class PIDController(Node):
         self.ki = scale*0.02 # 0.02 works
         self.kd = scale*0.2 # 0.2 works
         self.previous_error = 0.0
-        self.integral = 0.1
+        self.integral = 0.0
         self.previous_time = None
 
         # Control parameters
@@ -52,11 +52,12 @@ class PIDController(Node):
         curr_time = self.get_clock().now()
         
         if msg.data and not self.is_stopped_for_sign:
+            # self.get_logger().info("Inside")
             debounce_elapsed = Duration(seconds=0.0)
             if self.last_stop_sign_handled_time is not None:
                  debounce_elapsed = curr_time - self.last_stop_sign_handled_time
 
-            if debounce_elapsed >= self.stop_sign_debounce_duration:
+            if self.last_stop_sign_handled_time is None or debounce_elapsed >= self.stop_sign_debounce_duration:
                 self.is_stopped_for_sign = True
                 self.stop_sign_start_time = curr_time
                 self.last_stop_sign_handled_time = curr_time
@@ -71,7 +72,7 @@ class PIDController(Node):
             self.previous_time = self.get_clock().now()
             cmd = Twist()
             cmd.linear.x = -self.min_linear_speed*1.0
-            cmd.angular.z = -1.2
+            cmd.angular.z = -1.5
             self.publisher.publish(cmd)
             self.get_logger().info(f"Stop data received")
         else:
@@ -101,6 +102,7 @@ class PIDController(Node):
             k = 0.2 # linear relationship to slow down based on correction
             calculated_linear_speed = max(self.min_linear_speed, self.max_linear_speed - (k*abs(correction)))
             cmd.linear.x = calculated_linear_speed
+            # cmd.linear.x = 0.0
             cmd.angular.z = correction - 0.6# 0 angular = veer right
 
             if self.is_stopped_for_sign:
@@ -110,7 +112,7 @@ class PIDController(Node):
                     cmd.linear.x = 0.0
                     cmd.angular.z = 0.0
                     self.publisher.publish(cmd)
-                    self.get_logger().info(f"Stopped for stop sign. Time remaining: {(self.stop_duration - elapsed_time).to_sec():.2f}s")
+                    self.get_logger().info(f"Stopped for stop sign. Time remaining: {(self.stop_duration.nanoseconds - elapsed_time.nanoseconds) * 1e-9:.2f}s")
 
                 else:
                     # Stop duration over
@@ -120,9 +122,7 @@ class PIDController(Node):
 
             self.publisher.publish(cmd)
 
-            self.get_logger().info(
-                f"Linear.x: {cmd.linear.x:.3f}, Angular.z: {cmd.angular.z:.3f} | error: {error:.3f}, integral: {self.integral:.3f}, derivative: {derivative:.3f}, correction: {correction:.3f},  dt: {dt:.3f}"
-            )
+            # self.get_logger().info(f"Linear.x: {cmd.linear.x:.3f}, Angular.z: {cmd.angular.z:.3f} | error: {error:.3f}, integral: {self.integral:.3f}, derivative: {derivative:.3f}, correction: {correction:.3f},  dt: {dt:.3f}")
 
 
 def main(args=None):

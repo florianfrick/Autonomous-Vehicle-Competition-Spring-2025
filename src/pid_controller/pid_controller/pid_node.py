@@ -25,8 +25,8 @@ class PIDController(Node):
         self.previous_time = None
 
         # Control parameters
-        self.min_linear_speed = 0.12 # 0.12 works
-        self.max_linear_speed = 0.19 # 0.15 works
+        self.min_linear_speed = 0.13 # 0.12 works
+        self.max_linear_speed = 0.22 # 0.19 works
 
         # Turning help parameters
         self.lost_tape = False
@@ -70,16 +70,14 @@ class PIDController(Node):
             self.previous_time = curr_time
 
             cmd = Twist()
-            k = 0.2 # linear relationship to slow down based on correction
+            k = 0.3 # k = 0.3 works; linear relationship to slow down based on correction
             calculated_linear_speed = max(self.min_linear_speed, self.max_linear_speed - (k*abs(correction)))
             cmd.linear.x = calculated_linear_speed
             cmd.angular.z = correction - 0.55 # zero angular = veer right (if veering left, decrease value being subtracted)
             # cmd.angular.z = -0.6 # 0 angular = veer right
             self.publisher.publish(cmd)
 
-            self.get_logger().info(
-                f"Linear.x: {cmd.linear.x:.3f}, Angular.z: {cmd.angular.z:.3f} | error: {error:.3f}, integral: {self.integral:.3f}, derivative: {derivative:.3f}, correction: {correction:.3f},  dt: {dt:.3f}"
-            )
+            # self.get_logger().info(f"Linear.x: {cmd.linear.x:.3f}, Angular.z: {cmd.angular.z:.3f} | error: {error:.3f}, integral: {self.integral:.3f}, derivative: {derivative:.3f}, correction: {correction:.3f},  dt: {dt:.3f}")
 
 
 def main(args=None):

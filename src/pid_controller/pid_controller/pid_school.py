@@ -100,9 +100,7 @@ class PIDController(Node):
             cmd.angular.z = correction - 0.6# 0 angular = veer right
             self.publisher.publish(cmd)
 
-            self.get_logger().info(
-                f"Schoolzone: {self.schoolzone}, Linear.x: {cmd.linear.x:.3f}, Angular.z: {cmd.angular.z:.3f} | error: {error:.3f}, integral: {self.integral:.3f}, derivative: {derivative:.3f}, correction: {correction:.3f},  dt: {dt:.3f}"
-            )
+            # self.get_logger().info(f"Schoolzone: {self.schoolzone}, Linear.x: {cmd.linear.x:.3f}, Angular.z: {cmd.angular.z:.3f} | error: {error:.3f}, integral: {self.integral:.3f}, derivative: {derivative:.3f}, correction: {correction:.3f},  dt: {dt:.3f}")
 
 
 def main(args=None):

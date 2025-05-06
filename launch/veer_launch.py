@@ -77,6 +77,6 @@ def generate_launch_description():
         camera_node,
         bright_spot_tracker_node,
         motor_listener_node,
-        rqt_image_view_node,
+        # rqt_image_view_node,
         launch_pid_event_handler,
     ])

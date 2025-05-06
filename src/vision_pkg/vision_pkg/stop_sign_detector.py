@@ -48,14 +48,16 @@ class StopSignDetector(Node):
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.04 * cv2.arcLength(cnt, True), True)
             area = cv2.contourArea(cnt)
-            if len(approx) >= 6 and area > 500:
+            if len(approx) >= 6:
+                self.get_logger().info(f"STOP sign NOT detected.   Area: {area}")
+            if len(approx) >= 6 and area > 7500:
                 detected = True
                 break
 
         if detected:
             if not self.stop_sign_detected:
                 self.publisher_.publish(Bool(data=True))
-                self.get_logger().info("STOP sign detected.")
+                self.get_logger().info("STOP sign detected")
                 self.stop_sign_detected = True
         else:
             self.stop_sign_detected = False
