@@ -46,9 +46,9 @@ class GreenSchoolZoneDetector(Node):
         if contours:
             largest = max(contours, key=cv2.contourArea)
 
-            self.get_logger().info(f"Number of green school zone pixels: {len(largest)}")
+            # self.get_logger().info(f"Number of green school zone pixels: {len(largest)}")
 
-            if len(largest) > 50: # potentially needs tuning
+            if len(largest) > 75: # potentially needs tuning
                 self.publisher_.publish(Bool(data=True)) 
 
         

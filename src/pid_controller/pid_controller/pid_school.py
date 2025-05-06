@@ -31,7 +31,7 @@ class PIDController(Node):
 
         # Control parameters
         self.min_linear_speed = 0.12 # 0.12
-        self.max_linear_speed = 0.17 #  0.15
+        self.max_linear_speed = 0.18 #  0.15
 
         self.schoolzone = False
 
@@ -96,7 +96,8 @@ class PIDController(Node):
                 if calculated_linear_speed > 0:
                     calculated_linear_speed = self.min_linear_speed
 
-            cmd.linear.x = calculated_linear_speed
+            # cmd.linear.x = calculated_linear_speed
+            cmd.linear.x = 0.0
             cmd.angular.z = correction - 0.6# 0 angular = veer right
             self.publisher.publish(cmd)
 

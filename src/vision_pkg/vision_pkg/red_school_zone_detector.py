@@ -45,7 +45,7 @@ class RedSchoolZoneDetector(Node):
 
             self.get_logger().info(f"Number of red school zone pixels: {len(largest)}")
 
-            if len(largest) > 50: # potentially needs tuning
+            if len(largest) > 75: # potentially needs tuning
                 self.publisher_.publish(Bool(data=True)) 
 
 
