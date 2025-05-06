@@ -42,10 +42,12 @@ class RedSchoolZoneDetector(Node):
 
         if contours:
             largest = max(contours, key=cv2.contourArea)
+            area = cv2.contourArea(largest)
 
-            self.get_logger().info(f"Number of red school zone pixels: {len(largest)}")
+            self.get_logger().info(f"Area of red school zone: {len(largest)}")
 
-            if len(largest) > 75: # potentially needs tuning
+            # if len(largest) > 75: # potentially needs tuning
+            if area > 2000: # potentially needs tuning
                 self.publisher_.publish(Bool(data=True)) 
 
 

@@ -35,6 +35,10 @@ class PIDController(Node):
 
         self.schoolzone = False
 
+        self.exiting_schoolzone = False
+        self.exit_schoolzone_time = None
+        self.exit_delay = 9.0  # seconds to wait before speeding up again
+
         # Turning help parameters
         self.lost_tape = False
         self.last_seen_tape_time = None
@@ -50,8 +54,11 @@ class PIDController(Node):
 
     def greenschool_callback(self, msg):
         if msg.data:
-            self.schoolzone = False
-            self.get_logger().info("Exiting school zone")
+            if self.schoolzone: # Holds self.schoolzone = True during delay (reset after delay in PID control below)
+                self.exiting_schoolzone = True
+                self.exit_schoolzone_time = self.get_clock().now()
+                self.get_logger().info("Green detected — delaying school zone exit.")
+
 
 
     def offset_callback(self, msg):
@@ -92,12 +99,21 @@ class PIDController(Node):
             k = 0.2 # linear relationship to slow down based on correction
             calculated_linear_speed = max(self.min_linear_speed, self.max_linear_speed - (k*abs(correction)))
 
+            # Check if we are in the delay period after seeing green
+            if self.exiting_schoolzone and self.exit_schoolzone_time:
+                elapsed = (curr_time - self.exit_schoolzone_time).nanoseconds * 1e-9
+                if elapsed >= self.exit_delay:
+                    self.schoolzone = False
+                    self.exiting_schoolzone = False
+                    self.get_logger().info("Exited school zone after delay.")
+
+
             if self.schoolzone:
                 if calculated_linear_speed > 0:
                     calculated_linear_speed = self.min_linear_speed
 
-            # cmd.linear.x = calculated_linear_speed
-            cmd.linear.x = 0.0
+            cmd.linear.x = calculated_linear_speed
+            # cmd.linear.x = 0.0
             cmd.angular.z = correction - 0.6# 0 angular = veer right
             self.publisher.publish(cmd)
 
