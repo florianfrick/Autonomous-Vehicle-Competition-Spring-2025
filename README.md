@@ -6,13 +6,14 @@ We built an autonomous vehicle using a Raspberry Pi-based platform that navigate
 
 ## Team Members
 
+- Florian Frick
 - Sheetal Sharma  
 - Nikhil Kishor Sawane  
 - Kirin Kawamoto  
 - Jay Warren  
-- Florian Frick
 
 ## Results
+
 - See report.pdf for the technical report.
 - See ProjectVideoLinks for videos demonstrating the robot's capabilities.
 
