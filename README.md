@@ -40,37 +40,3 @@ deepRacerWS/
 ├── ProjectVideoLinks         # Demonstration videos
 └── README.md
 ```
-
-## Setup Instructions
-
-### On TurtleCar (Raspberry Pi):
-```bash
-git clone https://github.com/Sheetal-CU/Advanced-Robotics-Project.git
-cd Advanced-Robotics-Project
-source /opt/ros/humble/setup.bash
-colcon build --symlink-install
-source install/setup.bash
-```
-
-### Start Camera:
-```bash
-ros2 run v4l2_camera v4l2_camera_node
-```
-
-### Start Edge Detection:
-```bash
-ros2 run vision_pkg canny_node
-```
-
-## Dependencies
-
-- ROS 2 Humble
-- `v4l2_camera`
-- `pca9685`
-- OpenCV (for vision tasks)
-- NumPy, matplotlib
-
-## Important Dates
-
-- Final demo: **Tuesday, May 6th at 1:30 PM**
-- Report + GitHub link due: **Before May 6th, 1:30 PM**
