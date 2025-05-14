@@ -1,10 +1,8 @@
-# Advanced Robotics Final Project – TurtleCar
-
-This repository contains the implementation and documentation for our final project in **ROBO 5302: Advanced Robotics** at CU Boulder.
+#Autonomous Vehicle Competition Spring 2025 – Team TurtleCar
 
 ## Project Overview
 
-We built an autonomous vehicle using a Raspberry Pi-based platform (TurtleCar) that navigates a closed indoor track. Our implementation focuses on vision-based navigation using Canny edge detection and model-based control strategies like MPC and PID.
+We built an autonomous vehicle using a Raspberry Pi-based platform that navigates a closed indoor track and adheres to traffic signs. Our implementation focuses on vision-based navigation and PID control.
 
 ## Team Members
 
@@ -14,13 +12,16 @@ We built an autonomous vehicle using a Raspberry Pi-based platform (TurtleCar) t
 - Jay Warren  
 - Florian Frick
 
+## Results
+- See report.pdf for the technical report.
+- See ProjectVideoLinks for videos demonstrating the robot's capabilities.
+
+
 ## Objectives
 
-- Vision-based line following using camera and Canny edge detection.
-- Model Predictive Control (MPC) for smooth path following.
+- Vision-based line following using camera and contour detection with OpenCV.
 - PID controller for comparison.
-- Traffic sign detection (stop signs, speed limits) – In Progress
-- Real-time telemetry interface – In Progress
+- Traffic sign detection (stop signs, speed limits)
 
 ## Repository Structure
 
