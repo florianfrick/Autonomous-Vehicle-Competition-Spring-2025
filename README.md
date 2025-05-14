@@ -1,4 +1,4 @@
-#Autonomous Vehicle Competition Spring 2025 – Team TurtleCar
+# Autonomous Vehicle Competition Spring 2025 – Team TurtleCar
 
 ## Project Overview
 
