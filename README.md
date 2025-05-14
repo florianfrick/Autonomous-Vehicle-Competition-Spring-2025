@@ -36,7 +36,8 @@ deepRacerWS/
 │   ├── rplidar_ros/          # LIDAR driver
 │   └── teleop_twist_keyboard/ # Keyboard teleoperation
 ├── launch/                   # Launch files
-├── testingFile.py            # Misc. test scripts
+├── report.pdf                # Technical report
+├── ProjectVideoLinks         # Demonstration videos
 └── README.md
 ```
 
